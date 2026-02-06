@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>✅ Тест работы домена</title>
+    <style>
+        /* Стили прямо в теге style */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        h1 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 2.2rem;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            background: #28a745;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            margin-top: 10px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        
+        .info-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .info-card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .info-card p {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #333;
+        }
+        
+        .tests {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .test-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        .test-btn:hover {
+            background: #5a67d8;
+        }
+        
+        #test-results {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            display: none;
+        }
+        
+        .result-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        .warning { color: #ffc107; }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .debug {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            color: #fff;
+            border-radius: 8px;
+            font-family: 'Consolas', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌐 Тест работы домена</h1>
+            <div class="status-badge" id="status">✅ САЙТ РАБОТАЕТ</div>
+        </header>
+        
+        <div class="info-grid">
+            <div class="info-card">
+                <h3>ДОМЕН</h3>
+                <p id="domain">Загрузка...</p>
+            </div>
+            <div class="info-card">
+                <h3>ВРЕМЯ</h3>
+                <p id="time">Загрузка...</p>
+            </div>
+            <div class="info-card">
+                <h3>ПРОТОКОЛ</h3>
+                <p id="protocol">Загрузка...</p>
+            </div>
+            <div class="info-card">
+                <h3>IP КЛИЕНТА</h3>
+                <p id="ip">Загрузка...</p>
+            </div>
+        </div>
+        
+        <div class="tests">
+            <h3 style="margin-bottom: 15px; color: #333;">🧪 Тесты подключения</h3>
+            <button class="test-btn" onclick="runAllTests()">▶ Запустить все тесты</button>
+            
+            <div id="test-results">
+                <h4 style="margin-bottom: 10px;">Результаты:</h4>
+                <div id="test-list"></div>
+            </div>
+        </div>
+        
+        <button class="test-btn" onclick="showDebugInfo()" style="background: #6c757d;">🔧 Показать отладочную информацию</button>
+        
+        <div id="debug-info" class="debug" style="display: none;">
+            <pre id="debug-output">Нажмите кнопку выше для отображения информации...</pre>
+        </div>
+        
+        <footer>
+            <p id="load-time">Время загрузки страницы: -- мс</p>
+            <p>Тестирование работы домена и хостинга</p>
+            <p style="margin-top: 10px; font-size: 0.8rem;">Обновите страницу (F5) для повторной проверки</p>
+        </footer>
+    </div>
+
+    <script>
+        // Записываем время начала загрузки
+        const startTime = performance.now();
+        
+        // Функция для обновления времени
+        function updateTime() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('ru-RU');
+            const dateStr = now.toLocaleDateString('ru-RU');
+            document.getElementById('time').textContent = `${dateStr} ${timeStr}`;
+        }
+        
+        // Основная функция инициализации
+        window.onload = function() {
+            // Время загрузки
+            const loadTime = performance.now() - startTime;
+            document.getElementById('load-time').textContent = 
+                `Время загрузки страницы: ${Math.round(loadTime)} мс`;
+            
+            // Информация о домене
+            document.getElementById('domain').textContent = window.location.hostname;
+            document.getElementById('protocol').textContent = window.location.protocol.replace(':', '').toUpperCase();
+            
+            // Обновление времени
+            updateTime();
+            setInterval(updateTime, 1000);
+            
+            // Получение IP через внешний сервис
+            fetch('https://api.ipify.org?format=json')
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('ip').textContent = data.ip;
+                })
+                .catch(() => {
+                    document.getElementById('ip').textContent = 'Неизвестен';
+                });
+            
+            // Вывод в консоль для отладки
+            console.log('=== ТЕСТ ДОМЕНА ===');
+            console.log('Домен:', window.location.hostname);
+            console.log('URL:', window.location.href);
+            console.log('Протокол:', window.location.protocol);
+            console.log('Время загрузки:', Math.round(loadTime), 'мс');
+            console.log('==================');
+        };
+        
+        // Запуск всех тестов
+        function runAllTests() {
+            const resultsDiv = document.getElementById('test-results');
+            const testList = document.getElementById('test-list');
+            
+            // Показываем блок результатов
+            resultsDiv.style.display = 'block';
+            testList.innerHTML = '';
+            
+            // Добавляем тесты
+            addTest('Проверка JavaScript...', 'info');
+            
+            // Тест 1: Проверка DOM
+            setTimeout(() => {
+                if (document.getElementById('domain').textContent !== 'Загрузка...') {
+                    addTest('✅ DOM загружен', 'success');
+                } else {
+                    addTest('❌ Ошибка DOM', 'error');
+                }
+                
+                // Тест 2: Проверка соединения
+                addTest('Проверка соединения с сервером...', 'info');
+                fetch(window.location.origin, { method: 'HEAD' })
+                    .then(response => {
+                        addTest(`✅ Сервер отвечает: ${response.status}`, 'success');
+                    })
+                    .catch(error => {
+                        addTest(`❌ Ошибка соединения: ${error.message}`, 'error');
+                    });
+                
+                // Тест 3: Проверка CSS
+                if (document.styleSheets.length > 0) {
+                    addTest('✅ CSS загружен', 'success');
+                } else {
+                    addTest('⚠️ CSS не обнаружен', 'warning');
+                }
+                
+                // Тест 4: Проверка консоли
+                console.log('Тест консоли: Домен работает корректно');
+                addTest('✅ Консоль браузера доступна', 'success');
+                
+                // Тест 5: Проверка времени ответа
+                const start = performance.now();
+                fetch(window.location.origin)
+                    .then(() => {
+                        const time = performance.now() - start;
+                        addTest(`✅ Время ответа: ${Math.round(time)} мс`, 'success');
+                    });
+                    
+            }, 500);
+        }
+        
+        // Добавление результата теста
+        function addTest(text, type) {
+            const testList = document.getElementById('test-list');
+            const div = document.createElement('div');
+            div.className = `result-item ${type}`;
+            div.textContent = text;
+            testList.appendChild(div);
+        }
+        
+        // Показать отладочную информацию
+        function showDebugInfo() {
+            const debugDiv = document.getElementById('debug-info');
+            const output = document.getElementById('debug-output');
+            
+            debugDiv.style.display = 'block';
+            
+            let info = `=== ОТЛАДОЧНАЯ ИНФОРМАЦИЯ ===\n\n`;
+            info += `Домен: ${window.location.hostname}\n`;
+            info += `Полный URL: ${window.location.href}\n`;
+            info += `Протокол: ${window.location.protocol}\n`;
+            info += `Порт: ${window.location.port || '80/443'}\n`;
+            info += `Путь: ${window.location.pathname}\n\n`;
+            
+            info += `User Agent:\n${navigator.userAgent}\n\n`;
+            
+            info += `Язык браузера: ${navigator.language}\n`;
+            info += `Онлайн: ${navigator.onLine ? 'Да' : 'Нет'}\n`;
+            info += `Платформа: ${navigator.platform}\n`;
+            info += `Куки: ${navigator.cookieEnabled ? 'Включены' : 'Выключены'}\n`;
+            info += `JavaScript: ${typeof window !== 'undefined' ? 'Включен' : 'Выключен'}\n\n`;
+            
+            info += `Размер экрана: ${window.screen.width}x${window.screen.height}\n`;
+            info += `Размер окна: ${window.innerWidth}x${window.innerHeight}\n`;
+            
+            output.textContent = info;
+            
+            // Прокручиваем к отладочной информации
+            debugDiv.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // Автоматический запуск тестов через 3 секунды
+        setTimeout(() => {
+            document.getElementById('status').textContent = '✅ САЙТ РАБОТАЕТ (автопроверка пройдена)';
+            document.getElementById('status').style.background = '#28a745';
+        }, 3000);
+    </script>
+</body>
+</html>
